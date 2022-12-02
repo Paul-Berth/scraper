@@ -16,45 +16,6 @@ const scraperObject = {
     let page = await browser.newPage();
     console.log(`Navigating to ${mainUrl}...`);
     await page.goto(mainUrl);
-    async function scrapeCurrentPage() {
-      await page.waitForSelector(
-        '#content > div.recipe-search__resuts > div.recipe-search__col-left > div > div:nth-child(5)'
-      );
-      let urls = [];
-      urls = urls.concat(
-        await page.$eval(
-          '#content > div.recipe-search__resuts > div.recipe-search__col-left > div > div:nth-child(5)',
-          (container) => {
-            let urls = [];
-            for (let i = 0; i < container.children.length; i++) {
-              urls.push(container.children[i].querySelector('a').href);
-            }
-            return urls;
-          }
-        )
-      );
-      //...
-      for (link in urls) {
-        let currentPageData = await pagePromise(urls[link]);
-        scrapedData.push(currentPageData);
-      }
-      fs.writeFileSync('dessert.json', JSON.stringify(scrapedData));
-      index += 1;
-      await page.goto(mainUrl + index.toString());
-      if (index <= 50) return scrapeCurrentPage(); // Call this function recursively
-      await page.close();
-      return scrapedData;
-    }
-    let data = await scrapeCurrentPage();
-    return data;
-  },
-};
-
-const scraperObject = {
-  async scraper(browser, isHeadless) {
-    let page = await browser.newPage();
-    console.log(`Navigating to ${mainUrl}...`);
-    await page.goto(mainUrl);
     if (!isHeadless) {
       await page.waitForSelector('#didomi-notice-agree-button');
       await page.click('#didomi-notice-agree-button');
